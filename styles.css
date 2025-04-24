@@ -1,0 +1,127 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f5f0;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+form#registroForm {
+  background-color: #f3e9d2;
+  padding: 20px;
+  border-radius: 10px;
+  width: fit-content;
+  max-width: 90%;
+  margin: 20px auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+form#registroForm label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+form#registroForm input {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+form#registroForm button {
+  background-color: #d4b483;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+form#registroForm button:hover {
+  background-color: #c2a270;
+}
+
+#cuestionario {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+.pregunta {
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+}
+
+.pregunta p {
+  margin-bottom: 8px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 6px;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  margin: 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 600px) {
+  form#registroForm {
+    padding: 15px;
+    width: 90%;
+  }
+
+  form#registroForm input, form#registroForm button {
+    font-size: 1em;
+    padding: 10px;
+  }
+
+  .pregunta {
+    padding: 10px;
+  }
+
+  .pregunta p {
+    font-size: 1em;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  label {
+    flex-direction: row;
+    align-items: flex-start;
+    font-size: 1em;
+  }
+
+  input[type="radio"] {
+    transform: scale(1.2);
+  }
+
+  div[style*="background-image"] img {
+    max-height: 50px !important;
+  }
+
+  div[style*="background-image"] h1 {
+    font-size: 1.2em !important;
+    text-align: right;
+  }
+}

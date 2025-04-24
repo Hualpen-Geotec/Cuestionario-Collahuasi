@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cuestionario Minero</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div style="
+  background-image: url('IMG20230425123305.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 20px 30px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  margin-bottom: 20px;
+">
+  <img src="Logo Academia (002).png" alt="Logo Hualpén Academia" style="max-height: 80px; width: auto;">
+  <h1 style="font-size: 2em; font-weight: bold; margin: 10px auto 0; text-align: center; flex-grow: 1;">
+    CUESTIONARIO MINERO
+  </h1>
+</div>
+
+<div style="text-align: center; margin-top: 10px;">
+  <a href="index_mobile.html" style="color: #555; text-decoration: underline; font-size: 0.9em;">
+    Versión para móviles
+  </a>
+</div>
+
+
+  <h1>Cuestionario Minero</h1>
+  <form id="registroForm">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" required>
+
+    <label for="rut">RUT:</label>
+    <input type="text" id="rut" required>
+
+    <label for="correo">Correo Electrónico:</label>
+    <input type="email" id="correo" required>
+
+    <button type="submit">Comenzar</button>
+  </form>
+
+  <div id="cuestionario" style="display:none;">
+    <!-- Preguntas se cargarán aquí dinámicamente -->
+  </div>
+
+  <script src="script.js"></script>
+
+<div id="solicitudIngreso" style="display:none; margin-top: 20px;">
+  <h3>Solicitud de Ingreso</h3>
+  <p>Rellena los datos y serán enviados a tu supervisor para autorizar el acceso.</p>
+  <form id="formSolicitud">
+    <input type="text" id="nombreSolicitud" placeholder="Nombre completo" required><br>
+    <input type="text" id="rutSolicitud" placeholder="RUT" required><br>
+    <input type="email" id="correoSolicitud" placeholder="Correo electrónico" required><br>
+    <button type="submit">Enviar Solicitud</button>
+  </form>
+</div>
+</body>
+</html>
