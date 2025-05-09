@@ -1,10 +1,8 @@
-// CONFIG
 const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
 const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBfeeZAPUZ4SqMX3MhmpcdkPPhNrk0gFwpBoewz5Y8VoWFsZNs2qM/exec";
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycbxbGCPrz9NOkROOFOT1ffkwGskzRngk7R4UEIBMq3-vzuEbq0K_B6QMnV9Q7NafgvwBZA/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // INDEX
   const rutInput = document.getElementById("rut");
   const nombreInput = document.getElementById("nombreInput");
   const correoInput = document.getElementById("correoInput");
@@ -61,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // FORMS
   const formularioPreguntas = document.getElementById("formularioPreguntas");
 
   if (formularioPreguntas) {
@@ -77,13 +74,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetch(PREGUNTAS_URL)
       .then(res => res.json())
-      .then(data => {
-        console.log("Preguntas cargadas:", data);
-        mostrarPreguntas(data);
-      })
+      .then(data => mostrarPreguntas(data))
       .catch(err => {
         formularioPreguntas.innerHTML = "<p style='color: red;'>Error cargando preguntas.</p>";
-        console.error("Error en carga de preguntas:", err);
+        console.error(err);
       });
 
     function mostrarPreguntas(preguntas) {
@@ -146,14 +140,21 @@ document.addEventListener("DOMContentLoaded", () => {
       ).join("");
       document.getElementById("resumenErrores").innerHTML = resumen;
 
-      fetch(ENVIO_URL, {
-        method: "POST",
-        body: JSON.stringify({ rut, nombre, correo, nota: porcentaje, errores: erroresPorFuente }),
-        headers: { "Content-Type": "application/json" }
-      }).catch(err => {
-        alert("Error al guardar los resultados.");
-        console.error("Error al enviar resultados:", err);
+      const params = new URLSearchParams({
+        rut,
+        nombre,
+        correo,
+        nota: porcentaje,
+        errores: JSON.stringify(erroresPorFuente)
       });
+
+      fetch(`${ENVIO_URL}?${params.toString()}`)
+        .then(res => res.text())
+        .then(res => console.log("Resultado enviado:", res))
+        .catch(err => {
+          alert("Error al guardar los resultados.");
+          console.error("Error al enviar resultados:", err);
+        });
 
       document.getElementById("resultados").style.display = "block";
     }
@@ -164,5 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
 
 
