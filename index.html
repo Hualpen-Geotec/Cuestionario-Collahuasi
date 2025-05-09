@@ -7,14 +7,24 @@
   <link rel="stylesheet" href="style.css?v=1.0" />
 </head>
 <body>
-  <div class="container">
-    <header class="encabezado">
-      <div class="logo-titulo">
-        <img src="IMG20230425123305.jpg" alt="Logo Izquierdo" class="logo" />
-        <h1 class="titulo">Cuestionario Collahuasi</h1>
-      </div>
-      <img src="Logo Academia (002).png" alt="Banner Academia" class="banner-fondo" />
-    </header>
+  <div style="
+    background-image: url('IMG20230425123305.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 20px 30px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    margin-bottom: 20px;
+  ">
+    <img src="Logo Academia (002).png" alt="Logo Hualpén Academia" style="max-height: 80px; width: auto;">
+    <h1 style="font-size: 2em; font-weight: bold; margin: 10px auto 0; text-align: center; flex-grow: 1;">
+      CUESTIONARIO MINERO
+    </h1>
+  </div>
 
     <form id="registroForm">
       <label for="rut">RUT (solo números, sin puntos ni guion):</label>
