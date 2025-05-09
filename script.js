@@ -1,13 +1,9 @@
-// ---------------------
-// CONFIGURACIÓN GENERAL
-// ---------------------
+// CONFIG
 const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
 const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBfeeZAPUZ4SqMX3MhmpcdkPPhNrk0gFwpBoewz5Y8VoWFsZNs2qM/exec";
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycbzvfNfY1QHKC755FEcbvpPf0tTZcK9DcHjoqGQpKtF8qwf-St88-zulfiVKD2ixNryhqA/exec";
 
-// ---------------------
-// FUNCIONES PARA INDEX
-// ---------------------
+// INDEX
 if (document.getElementById("registroForm")) {
   document.getElementById("rut").addEventListener("input", function () {
     this.value = this.value.replace(/\D/g, "");
@@ -52,9 +48,7 @@ if (document.getElementById("registroForm")) {
   });
 }
 
-// ---------------------
-// FUNCIONES PARA FORMS
-// ---------------------
+// FORMS
 if (document.getElementById("formularioPreguntas")) {
   let preguntas = [];
 
@@ -102,14 +96,12 @@ if (document.getElementById("formularioPreguntas")) {
 
   function procesarRespuestas(e) {
     e.preventDefault();
-    const respuestasUsuario = [];
     let correctas = 0;
     const erroresPorFuente = {};
 
     preguntas.forEach((p, i) => {
       const respuesta = document.querySelector(`input[name="pregunta${i}"]:checked`).value;
       const esCorrecta = respuesta === p.correcta;
-      respuestasUsuario.push({ usuario: respuesta, correcta: p.correcta, fuente: p.fuente });
 
       if (esCorrecta) {
         correctas++;
@@ -155,3 +147,4 @@ if (document.getElementById("formularioPreguntas")) {
     window.location.href = "index.html";
   });
 }
+
