@@ -3,11 +3,8 @@ const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQw
 const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBfeeZAPUZ4SqMX3MhmpcdkPPhNrk0gFwpBoewz5Y8VoWFsZNs2qM/exec";
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycbxbGCPrz9NOkROOFOT1ffkwGskzRngk7R4UEIBMq3-vzuEbq0K_B6QMnV9Q7NafgvwBZA/exec";
 
-// INICIO
 document.addEventListener("DOMContentLoaded", () => {
-  // -----------------------------
-  // index.html: validación y guardar datos
-  // -----------------------------
+  // INDEX
   const rutInput = document.getElementById("rut");
   const nombreInput = document.getElementById("nombreInput");
   const correoInput = document.getElementById("correoInput");
@@ -62,9 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // -----------------------------
-  // forms.html: carga preguntas y evalúa respuestas
-  // -----------------------------
+  // FORMS
   const formularioPreguntas = document.getElementById("formularioPreguntas");
 
   if (formularioPreguntas) {
@@ -171,3 +166,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
