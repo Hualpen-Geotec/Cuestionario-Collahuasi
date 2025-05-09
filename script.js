@@ -4,7 +4,7 @@ const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBf
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycbxbGCPrz9NOkROOFOT1ffkwGskzRngk7R4UEIBMq3-vzuEbq0K_B6QMnV9Q7NafgvwBZA/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // INDEX
+  // -------- INDEX: Validación de RUT --------
   const rutInput = document.getElementById("rut");
   const nombreInput = document.getElementById("nombreInput");
   const correoInput = document.getElementById("correoInput");
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // FORMS
+  // -------- FORMS: Mostrar preguntas y enviar respuestas --------
   const formularioPreguntas = document.getElementById("formularioPreguntas");
 
   if (formularioPreguntas) {
@@ -80,10 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(data => mostrarPreguntas(data))
       .catch(err => {
         formularioPreguntas.innerHTML = "<p style='color: red;'>Error cargando preguntas.</p>";
-        console.error(err);
+        console.error("Error cargando preguntas:", err);
       });
 
     function mostrarPreguntas(preguntas) {
+      formularioPreguntas.innerHTML = ""; // limpiar mensaje inicial
       if (!preguntas || preguntas.length === 0) {
         formularioPreguntas.innerHTML = "<p style='color: red;'>No se pudieron cargar preguntas.</p>";
         return;
@@ -118,8 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const erroresPorFuente = {};
 
       preguntas.forEach((p, i) => {
-        const respuesta = document.querySelector(`input[name="pregunta${i}"]:checked`).value;
-        const esCorrecta = respuesta === p.correcta;
+        const seleccionada = document.querySelector(`input[name="pregunta${i}"]:checked`).value;
+        const esCorrecta = seleccionada === p.correcta;
 
         if (esCorrecta) {
           correctas++;
@@ -130,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementsByName(`pregunta${i}`).forEach(r => {
           r.disabled = true;
           if (r.value === p.correcta) r.parentElement.style.color = "green";
-          if (r.value === respuesta && respuesta !== p.correcta) r.parentElement.style.color = "red";
+          if (r.value === seleccionada && r.value !== p.correcta) r.parentElement.style.color = "red";
         });
       });
 
@@ -138,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("porcentaje").textContent = `Tu puntaje es: ${porcentaje}%`;
 
       const resumen = Object.entries(erroresPorFuente).map(
-        ([clave, valor]) => `<p>${clave}: ${valor} errores</p>`
+        ([fuente, cantidad]) => `<p>${fuente}: ${cantidad} errores</p>`
       ).join("");
       document.getElementById("resumenErrores").innerHTML = resumen;
 
@@ -148,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" }
       }).catch(err => {
         alert("Error al guardar los resultados.");
-        console.error(err);
+        console.error("Error al enviar resultados:", err);
       });
 
       document.getElementById("resultados").style.display = "block";
@@ -160,3 +161,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
