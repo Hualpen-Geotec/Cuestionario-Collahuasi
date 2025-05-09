@@ -103,9 +103,46 @@ form button:hover {
   border: 1px solid #bde0fe;
 }
 
+#porcentaje {
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
 #resumenErrores p {
   margin: 5px;
   font-size: 16px;
+}
+
+/* NUEVO: Preguntas incorrectas con detalles */
+.pregunta-error {
+  border: 1px solid #ccc;
+  border-left: 6px solid #f44336;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  background-color: #fff8f8;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.pregunta-error p {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.pregunta-error ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.pregunta-error li {
+  padding: 3px 0;
+  font-size: 1em;
+}
+
+.pregunta-error li strong {
+  font-weight: bold;
 }
 
 /* Adaptación móvil */
