@@ -4,7 +4,7 @@ const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBf
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycbxbGCPrz9NOkROOFOT1ffkwGskzRngk7R4UEIBMq3-vzuEbq0K_B6QMnV9Q7NafgvwBZA/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // -------- INDEX: Validación de RUT --------
+  // INDEX
   const rutInput = document.getElementById("rut");
   const nombreInput = document.getElementById("nombreInput");
   const correoInput = document.getElementById("correoInput");
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // -------- FORMS: Mostrar preguntas y enviar respuestas --------
+  // FORMS
   const formularioPreguntas = document.getElementById("formularioPreguntas");
 
   if (formularioPreguntas) {
@@ -77,14 +77,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetch(PREGUNTAS_URL)
       .then(res => res.json())
-      .then(data => mostrarPreguntas(data))
+      .then(data => {
+        console.log("Preguntas cargadas:", data);
+        mostrarPreguntas(data);
+      })
       .catch(err => {
         formularioPreguntas.innerHTML = "<p style='color: red;'>Error cargando preguntas.</p>";
-        console.error("Error cargando preguntas:", err);
+        console.error("Error en carga de preguntas:", err);
       });
 
     function mostrarPreguntas(preguntas) {
-      formularioPreguntas.innerHTML = ""; // limpiar mensaje inicial
+      formularioPreguntas.innerHTML = "";
       if (!preguntas || preguntas.length === 0) {
         formularioPreguntas.innerHTML = "<p style='color: red;'>No se pudieron cargar preguntas.</p>";
         return;
@@ -161,4 +164,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
 
