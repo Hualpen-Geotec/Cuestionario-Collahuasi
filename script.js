@@ -1,8 +1,10 @@
+// CONFIGURACIÓN DE URLS
 const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
 const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBfeeZAPUZ4SqMX3MhmpcdkPPhNrk0gFwpBoewz5Y8VoWFsZNs2qM/exec";
-const ENVIO_URL = "https://script.google.com/macros/s/AKfycbxbGCPrz9NOkROOFOT1ffkwGskzRngk7R4UEIBMq3-vzuEbq0K_B6QMnV9Q7NafgvwBZA/exec";
+const ENVIO_URL = "https://script.google.com/macros/s/AKfycby6Kd52wtnq71OsQgzuE9rWseu8VlaORZyI1Gq3jRLm2H3gjxQTilU-rQlFZkWZeubSnQ/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Sección INDEX
   const rutInput = document.getElementById("rut");
   const nombreInput = document.getElementById("nombreInput");
   const correoInput = document.getElementById("correoInput");
@@ -59,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Sección FORMS
   const formularioPreguntas = document.getElementById("formularioPreguntas");
 
   if (formularioPreguntas) {
@@ -77,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(data => mostrarPreguntas(data))
       .catch(err => {
         formularioPreguntas.innerHTML = "<p style='color: red;'>Error cargando preguntas.</p>";
-        console.error(err);
+        console.error("Error cargando preguntas:", err);
       });
 
     function mostrarPreguntas(preguntas) {
@@ -140,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ).join("");
       document.getElementById("resumenErrores").innerHTML = resumen;
 
+      // Enviar resultados por GET para evitar CORS
       const params = new URLSearchParams({
         rut,
         nombre,
@@ -165,6 +169,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-
 
