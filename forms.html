@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuestionario Collahuasi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Cuestionario</h1>
+    <form id="formularioPreguntas"></form>
+
+    <div id="resultados" style="display: none;">
+      <h2>Resultados</h2>
+      <p id="porcentaje"></p>
+      <div id="resumenErrores"></div>
+      <button id="nuevoIntento">Nuevo intento</button>
+    </div>
+  </div>
+
+  <script>
+    const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBfeeZAPUZ4SqMX3MhmpcdkPPhNrk0gFwpBoewz5Y8VoWFsZNs2qM/exec";
+    const ENVIO_URL = "https://script.google.com/macros/s/AKfycbzvfNfY1QHKC755FEcbvpPf0tTZcK9DcHjoqGQpKtF8qwf-St88-zulfiVKD2ixNryhqA/exec";
+
+    let preguntas = [];
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      const rut = localStorage.getItem("rut");
+      const nombre = localStorage.getItem("nombre");
+      const correo = localStorage.getItem("correo");
+
+      if (!rut || !nombre || !correo) {
+        alert("Debes ingresar desde la página principal.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      const res = await fetch(PREGUNTAS_URL);
+      preguntas = await res.json();
+      mostrarPreguntas();
+    });
+
+    function mostrarPreguntas() {
+      const form = document.getElementById("formularioPreguntas");
+      preguntas.forEach((p, i) => {
+        const bloque = document.createElement("div");
+        bloque.classList.add("pregunta");
+
+        bloque.innerHTML = `<p><strong>${i + 1}. ${p.pregunta}</strong></p>` +
+          p.alternativas.map((alt, idx) => `
+            <label>
+              <input type="radio" name="pregunta${i}" value="${alt}" required />
+              ${String.fromCharCode(65 + idx)}. ${alt}
+            </label>
+          `).join("") +
+          `<br><br>`;
+
+        form.appendChild(bloque);
+      });
+
+      const boton = document.createElement("button");
+      boton.type = "submit";
+      boton.textContent = "Ver Resultados";
+      form.appendChild(boton);
+
+      form.addEventListener("submit", procesarRespuestas);
+    }
+
+    function procesarRespuestas(e) {
+      e.preventDefault();
+      const respuestasUsuario = [];
+      let correctas = 0;
+      const erroresPorFuente = {};
+
+      preguntas.forEach((p, i) => {
+        const respuesta = document.querySelector(`input[name="pregunta${i}"]:checked`).value;
+        const esCorrecta = respuesta === p.correcta;
+        respuestasUsuario.push({ usuario: respuesta, correcta: p.correcta, fuente: p.fuente });
+
+        if (esCorrecta) {
+          correctas++;
+        } else {
+          erroresPorFuente[p.fuente] = (erroresPorFuente[p.fuente] || 0) + 1;
+        }
+
+        const radios = document.getElementsByName(`pregunta${i}`);
+        radios.forEach(r => {
+          r.disabled = true;
+          if (r.value === p.correcta) r.parentElement.style.color = "green";
+          if (r.value === respuesta && respuesta !== p.correcta) r.parentElement.style.color = "red";
+        });
+      });
+
+      const porcentaje = Math.round((correctas / preguntas.length) * 100);
+      document.getElementById("porcentaje").textContent = `Tu puntaje es: ${porcentaje}%`;
+
+      const resumen = Object.entries(erroresPorFuente).map(
+        ([clave, valor]) => `<p>${clave}: ${valor} errores</p>`
+      ).join("");
+      document.getElementById("resumenErrores").innerHTML = resumen;
+
+      // Enviar resultados a Google Sheets
+      fetch(ENVIO_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          rut: localStorage.getItem("rut"),
+          nombre: localStorage.getItem("nombre"),
+          correo: localStorage.getItem("correo"),
+          nota: porcentaje,
+          errores: erroresPorFuente
+        }),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      document.getElementById("resultados").style.display = "block";
+    }
+
+    document.getElementById("nuevoIntento").addEventListener("click", () => {
+      localStorage.removeItem("rut");
+      localStorage.removeItem("nombre");
+      localStorage.removeItem("correo");
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
