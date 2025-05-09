@@ -1,158 +1,157 @@
+// ---------------------
+// CONFIGURACIÓN GENERAL
+// ---------------------
+const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
+const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBfeeZAPUZ4SqMX3MhmpcdkPPhNrk0gFwpBoewz5Y8VoWFsZNs2qM/exec";
+const ENVIO_URL = "https://script.google.com/macros/s/AKfycbzvfNfY1QHKC755FEcbvpPf0tTZcK9DcHjoqGQpKtF8qwf-St88-zulfiVKD2ixNryhqA/exec";
 
-const API_URL = "https://script.google.com/macros/s/AKfycbx02jQvdy-INCR05Oro2gcp_Drfrw9avm5OOuij93vQzCygqzFw8gKxFVIQ8KlEgpzfiw/exec";
-
-document.getElementById('registroForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const nombre = document.getElementById('nombre').value;
-  const rut = document.getElementById('rut').value;
-  const correo = document.getElementById('correo').value;
-
-  validarRUT(rut).then((autorizado) => {
-    if (autorizado) {
-      obtenerPreguntas().then((preguntas) => {
-        mostrarPreguntas(preguntas, nombre, rut, correo);
-      });
-    } else {
-      // Mostrar solicitud ingreso
-      document.getElementById('solicitudIngreso').style.display = 'block';
-      document.getElementById('rutSolicitud').value = rut;
-    }
+// ---------------------
+// FUNCIONES PARA INDEX
+// ---------------------
+if (document.getElementById("registroForm")) {
+  document.getElementById("rut").addEventListener("input", function () {
+    this.value = this.value.replace(/\D/g, "");
   });
-});
 
-function validarRUT(rut) {
-  return fetch(`${API_URL}?action=validarRUT&rut=${encodeURIComponent(rut)}`, { method: "POST" })
-    .then(res => res.json())
-    .then(data => {
-      if (!data.autorizado) {
-        alert(data.mensaje);
+  document.getElementById("rut").addEventListener("blur", async function () {
+    const rutIngresado = this.value.trim();
+    const mensaje = document.getElementById("mensaje");
+    mensaje.textContent = "";
+
+    if (rutIngresado.length < 7) {
+      mensaje.textContent = "Por favor, ingresa un RUT válido.";
+      return;
+    }
+
+    try {
+      const res = await fetch(`${RUT_URL}?rut=${rutIngresado}`);
+      const data = await res.json();
+
+      if (data.autorizado) {
+        document.getElementById("nombre").textContent = data.nombre;
+        document.getElementById("correo").textContent = data.correo;
+        document.getElementById("datosUsuario").style.display = "block";
+      } else {
+        mensaje.textContent = "Este RUT no está autorizado para realizar el cuestionario.";
       }
-      return data.autorizado;
-    });
-}
+    } catch (err) {
+      mensaje.textContent = "Error al validar el RUT.";
+    }
+  });
 
-function obtenerPreguntas() {
-  return fetch(`${API_URL}?action=obtenerPreguntas`, { method: "POST" })
-    .then(res => res.json());
-}
+  document.getElementById("continuarBtn").addEventListener("click", () => {
+    const rut = document.getElementById("rut").value;
+    const nombre = document.getElementById("nombre").textContent;
+    const correo = document.getElementById("correo").textContent;
 
-function guardarResultado(nombre, rut, correo, puntaje) {
-  return fetch(`${API_URL}?action=guardarResultado&nombre=${encodeURIComponent(nombre)}&rut=${encodeURIComponent(rut)}&correo=${encodeURIComponent(correo)}&puntaje=${puntaje}`, {
-    method: "POST"
+    localStorage.setItem("rut", rut);
+    localStorage.setItem("nombre", nombre);
+    localStorage.setItem("correo", correo);
+
+    window.location.href = "forms.html";
   });
 }
 
-function mostrarPreguntas(data, nombre, rut, correo) {
-  const contenedor = document.getElementById('cuestionario');
-  contenedor.style.display = 'block';
-  contenedor.innerHTML = '<form id="quizForm"></form>';
+// ---------------------
+// FUNCIONES PARA FORMS
+// ---------------------
+if (document.getElementById("formularioPreguntas")) {
+  let preguntas = [];
 
-  const form = document.getElementById('quizForm');
-  let index = 0;
+  window.addEventListener("DOMContentLoaded", async () => {
+    const rut = localStorage.getItem("rut");
+    const nombre = localStorage.getItem("nombre");
+    const correo = localStorage.getItem("correo");
 
-  data.alternativas.forEach(p => {
-    form.innerHTML += `
-      <div>
-        <p><strong>${p[1]}</strong></p>
-        ${['A', 'B', 'C', 'D'].map((letra, i) => `
-          <label><input type="radio" name="q${index}" value="${letra}"> ${letra}) ${p[2 + i]}</label><br>
-        `).join('')}
-        <input type="hidden" name="correct${index}" value="${p[6]}">
-      </div><br>
-    `;
-    index++;
-  });
-
-  data.vf.forEach(p => {
-    form.innerHTML += `
-      <div>
-        <p><strong>${p[1]}</strong></p>
-        <label><input type="radio" name="q${index}" value="V"> Verdadero</label>
-        <label><input type="radio" name="q${index}" value="F"> Falso</label>
-        <input type="hidden" name="correct${index}" value="${p[6]}">
-      </div><br>
-    `;
-    index++;
-  });
-
-  form.innerHTML += `<button type="submit">Ver Resultados</button>`;
-
-  form.addEventListener('submit', function(e) {
-    function normalizar(valor) {
-      if (!valor) return "";
-      const v = valor.toString().trim().toUpperCase();
-      if (v === "V" || v === "VERDADERO") return "VERDADERO";
-      if (v === "F" || v === "FALSO") return "FALSO";
-      return v;
+    if (!rut || !nombre || !correo) {
+      alert("Debes ingresar desde la página principal.");
+      window.location.href = "index.html";
+      return;
     }
 
+    const res = await fetch(PREGUNTAS_URL);
+    preguntas = await res.json();
+    mostrarPreguntas();
+  });
+
+  function mostrarPreguntas() {
+    const form = document.getElementById("formularioPreguntas");
+    preguntas.forEach((p, i) => {
+      const bloque = document.createElement("div");
+      bloque.classList.add("pregunta");
+
+      bloque.innerHTML = `<p><strong>${i + 1}. ${p.pregunta}</strong></p>` +
+        p.alternativas.map((alt, idx) => `
+          <label>
+            <input type="radio" name="pregunta${i}" value="${alt}" required />
+            ${String.fromCharCode(65 + idx)}. ${alt}
+          </label>
+        `).join("") +
+        `<br><br>`;
+
+      form.appendChild(bloque);
+    });
+
+    const boton = document.createElement("button");
+    boton.type = "submit";
+    boton.textContent = "Ver Resultados";
+    form.appendChild(boton);
+
+    form.addEventListener("submit", procesarRespuestas);
+  }
+
+  function procesarRespuestas(e) {
     e.preventDefault();
+    const respuestasUsuario = [];
     let correctas = 0;
-    const total = index;
-    let respuestasIncorrectas = '';
+    const erroresPorFuente = {};
 
-    for (let i = 0; i < total; i++) {
-      const seleccionada = form.querySelector(`input[name="q${i}"]:checked`);
-      const correcta = form.querySelector(`input[name="correct${i}"]`).value;
+    preguntas.forEach((p, i) => {
+      const respuesta = document.querySelector(`input[name="pregunta${i}"]:checked`).value;
+      const esCorrecta = respuesta === p.correcta;
+      respuestasUsuario.push({ usuario: respuesta, correcta: p.correcta, fuente: p.fuente });
 
-      if (seleccionada && normalizar(seleccionada.value) === normalizar(correcta)) {
+      if (esCorrecta) {
         correctas++;
       } else {
-        const preguntaTexto = form.querySelectorAll('div')[i].querySelector('p strong').innerText;
-        let detalleUsuario = seleccionada ? seleccionada.nextSibling.textContent.trim() : 'Sin responder';
-        let detalleCorrecta = '';
-
-        if (seleccionada && seleccionada.value.match(/[A-D]/)) {
-          const opciones = form.querySelectorAll(`input[name="q${i}"]`);
-          const opcionCorrecta = Array.from(opciones).find(opt => opt.value === correcta);
-          if (opcionCorrecta) {
-            detalleCorrecta = opcionCorrecta.nextSibling.textContent.trim();
-          }
-        } else {
-          detalleUsuario = normalizar(detalleUsuario);
-          detalleCorrecta = normalizar(correcta);
-        }
-
-        respuestasIncorrectas += `<div style="margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 8px;">
-          <strong style="display:block; margin-bottom: 5px;">Pregunta ${i + 1}:</strong>
-          <div style="margin-left: 10px;">
-            <div><strong>Texto:</strong> ${preguntaTexto}</div>
-            <div><span style="color:red;"><strong>Incorrecta. Elegiste:</strong> ${detalleUsuario}</span></div>
-            <div><span style="color:green;"><strong>Correcta:</strong> ${detalleCorrecta}</span></div>
-          </div>
-        </div>`;
+        erroresPorFuente[p.fuente] = (erroresPorFuente[p.fuente] || 0) + 1;
       }
-    }
 
-    const puntaje = Math.round((correctas / total) * 100);
-    guardarResultado(nombre, rut, correo, puntaje).then(() => {
-      contenedor.innerHTML = `
-        <h2>Resultado Final: ${puntaje}%</h2>
-        ${respuestasIncorrectas}
-        <button onclick="location.reload()">Nuevo Intento</button>
-      `;
+      const radios = document.getElementsByName(`pregunta${i}`);
+      radios.forEach(r => {
+        r.disabled = true;
+        if (r.value === p.correcta) r.parentElement.style.color = "green";
+        if (r.value === respuesta && respuesta !== p.correcta) r.parentElement.style.color = "red";
+      });
     });
+
+    const porcentaje = Math.round((correctas / preguntas.length) * 100);
+    document.getElementById("porcentaje").textContent = `Tu puntaje es: ${porcentaje}%`;
+
+    const resumen = Object.entries(erroresPorFuente).map(
+      ([clave, valor]) => `<p>${clave}: ${valor} errores</p>`
+    ).join("");
+    document.getElementById("resumenErrores").innerHTML = resumen;
+
+    fetch(ENVIO_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        rut: localStorage.getItem("rut"),
+        nombre: localStorage.getItem("nombre"),
+        correo: localStorage.getItem("correo"),
+        nota: porcentaje,
+        errores: erroresPorFuente
+      }),
+      headers: { "Content-Type": "application/json" }
+    });
+
+    document.getElementById("resultados").style.display = "block";
+  }
+
+  document.getElementById("nuevoIntento").addEventListener("click", () => {
+    localStorage.removeItem("rut");
+    localStorage.removeItem("nombre");
+    localStorage.removeItem("correo");
+    window.location.href = "index.html";
   });
 }
-
-document.getElementById('formSolicitud').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const nombre = document.getElementById('nombreSolicitud').value;
-  const rut = document.getElementById('rutSolicitud').value;
-  const correo = document.getElementById('correoSolicitud').value;
-
-  fetch(`${API_URL}?action=registrarSolicitud`, {
-    method: "POST",
-    body: JSON.stringify({ nombre, rut, correo }),
-    headers: { "Content-Type": "application/json" }
-  })
-  .then(res => res.text())
-  .then(msg => {
-    alert("Solicitud enviada. Tu supervisor revisará tu caso.");
-    document.getElementById('solicitudIngreso').style.display = 'none';
-  })
-  .catch(err => {
-    alert("Error al enviar la solicitud.");
-    console.error(err);
-  });
-});
