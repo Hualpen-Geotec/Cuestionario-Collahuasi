@@ -24,8 +24,8 @@ if (document.getElementById("registroForm")) {
       const data = await res.json();
 
       if (data.autorizado) {
-        document.getElementById("nombre").textContent = data.nombre;
-        document.getElementById("correo").textContent = data.correo;
+        document.getElementById("nombreInput").value = data.nombre || "";
+        document.getElementById("correoInput").value = data.correo || "";
         document.getElementById("datosUsuario").style.display = "block";
       } else {
         mensaje.textContent = "Este RUT no está autorizado para realizar el cuestionario.";
@@ -36,9 +36,14 @@ if (document.getElementById("registroForm")) {
   });
 
   document.getElementById("continuarBtn").addEventListener("click", () => {
-    const rut = document.getElementById("rut").value;
-    const nombre = document.getElementById("nombre").textContent;
-    const correo = document.getElementById("correo").textContent;
+    const rut = document.getElementById("rut").value.trim();
+    const nombre = document.getElementById("nombreInput").value.trim();
+    const correo = document.getElementById("correoInput").value.trim();
+
+    if (!rut || !nombre || !correo) {
+      alert("Por favor, completa todos los datos.");
+      return;
+    }
 
     localStorage.setItem("rut", rut);
     localStorage.setItem("nombre", nombre);
@@ -147,4 +152,3 @@ if (document.getElementById("formularioPreguntas")) {
     window.location.href = "index.html";
   });
 }
-
