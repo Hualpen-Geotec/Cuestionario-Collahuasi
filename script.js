@@ -4,7 +4,6 @@ const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBf
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycby6Kd52wtnq71OsQgzuE9rWseu8VlaORZyI1Gq3jRLm2H3gjxQTilU-rQlFZkWZeubSnQ/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Sección INDEX
   const rutInput = document.getElementById("rut");
   const nombreInput = document.getElementById("nombreInput");
   const correoInput = document.getElementById("correoInput");
@@ -61,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Sección FORMS
   const formularioPreguntas = document.getElementById("formularioPreguntas");
 
   if (formularioPreguntas) {
@@ -117,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       let correctas = 0;
       const erroresPorFuente = {};
+      const preguntasErroneas = [];
 
       preguntas.forEach((p, i) => {
         const seleccionada = document.querySelector(`input[name="pregunta${i}"]:checked`).value;
@@ -126,24 +125,43 @@ document.addEventListener("DOMContentLoaded", () => {
           correctas++;
         } else {
           erroresPorFuente[p.fuente] = (erroresPorFuente[p.fuente] || 0) + 1;
+          preguntasErroneas.push({
+            pregunta: p.pregunta,
+            seleccionada,
+            correcta: p.correcta,
+            alternativas: p.alternativas
+          });
         }
 
-        document.getElementsByName(`pregunta${i}`).forEach(r => {
-          r.disabled = true;
-          if (r.value === p.correcta) r.parentElement.style.color = "green";
-          if (r.value === seleccionada && r.value !== p.correcta) r.parentElement.style.color = "red";
-        });
+        document.getElementsByName(`pregunta${i}`).forEach(r => r.disabled = true);
       });
 
       const porcentaje = Math.round((correctas / preguntas.length) * 100);
-      document.getElementById("porcentaje").textContent = `Tu puntaje es: ${porcentaje}%`;
+      const porcentajeEl = document.getElementById("porcentaje");
+      porcentajeEl.textContent = `Tu puntaje es: ${porcentaje}%`;
+      porcentajeEl.style.color = porcentaje >= 85 ? "green" : "red";
 
-      const resumen = Object.entries(erroresPorFuente).map(
-        ([fuente, cantidad]) => `<p>${fuente}: ${cantidad} errores</p>`
-      ).join("");
-      document.getElementById("resumenErrores").innerHTML = resumen;
+      // Mostrar solo las preguntas incorrectas
+      const resumen = document.getElementById("resumenErrores");
+      resumen.innerHTML = preguntasErroneas.map((p, i) => {
+        return `
+          <div class="pregunta-error">
+            <p><strong>${i + 1}. ${p.pregunta}</strong></p>
+            <ul>
+              ${p.alternativas.map(alt => {
+                if (alt === p.correcta) {
+                  return `<li style="color:green;"><strong>✓ ${alt}</strong> (correcta)</li>`;
+                } else if (alt === p.seleccionada) {
+                  return `<li style="color:red;"><strong>✗ ${alt}</strong> (tu respuesta)</li>`;
+                } else {
+                  return `<li>${alt}</li>`;
+                }
+              }).join("")}
+            </ul>
+          </div>
+        `;
+      }).join("");
 
-      // Enviar resultados por GET para evitar CORS
       const params = new URLSearchParams({
         rut,
         nombre,
@@ -169,4 +187,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
 
