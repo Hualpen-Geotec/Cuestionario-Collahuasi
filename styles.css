@@ -1,127 +1,127 @@
-
+/* Estilo general */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f5f0;
-  color: #333;
   margin: 0;
-  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #fef9f4;
+  color: #333;
 }
 
-form#registroForm {
-  background-color: #f3e9d2;
+.container {
+  max-width: 900px;
+  margin: 0 auto;
   padding: 20px;
+  background: #ffffffee;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   border-radius: 10px;
-  width: fit-content;
-  max-width: 90%;
-  margin: 20px auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-top: 40px;
 }
 
-form#registroForm label {
+/* Título */
+h1, h2 {
+  text-align: center;
+  color: #4b4b4b;
+}
+
+/* Formulario */
+form label {
   display: block;
-  margin-top: 10px;
+  margin-top: 20px;
   font-weight: bold;
 }
 
-form#registroForm input {
-  margin-top: 5px;
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+form input[type="text"] {
   width: 100%;
-}
-
-form#registroForm button {
-  background-color: #d4b483;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  width: 100%;
-}
-
-form#registroForm button:hover {
-  background-color: #c2a270;
-}
-
-#cuestionario {
-  max-width: 800px;
-  margin: 20px auto;
   padding: 10px;
-}
-
-.pregunta {
-  background: #fff;
-  padding: 12px 16px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  margin-bottom: 16px;
 }
 
-.pregunta p {
-  margin-bottom: 8px;
+form input[type="radio"] {
+  margin-right: 8px;
 }
 
-label {
-  display: flex;
-  align-items: center;
-  margin-bottom: 6px;
-  gap: 6px;
+form button {
+  display: block;
+  margin: 30px auto 10px;
+  padding: 12px 25px;
+  font-size: 16px;
+  background-color: #cce5dc;
+  border: none;
+  border-radius: 20px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
-input[type="radio"] {
-  margin: 0;
+form button:hover {
+  background-color: #a7d7c5;
 }
 
-h1 {
+.mensaje-error {
+  color: #c0392b;
+  font-weight: bold;
+  margin-top: 15px;
   text-align: center;
 }
 
+.pregunta {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f7f1f1;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
 
-/* Ajustes para pantallas pequeñas */
+.pregunta p {
+  margin-bottom: 10px;
+}
+
+.pregunta label {
+  display: block;
+  margin: 5px 0;
+  padding-left: 10px;
+}
+
+/* Resultados */
+#resultados {
+  margin-top: 30px;
+  text-align: center;
+  background: #f2f9ff;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #bde0fe;
+}
+
+#resumenErrores p {
+  margin: 5px;
+  font-size: 16px;
+}
+
+/* Logo y banner */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.logo {
+  height: 80px;
+}
+
+.banner {
+  height: 80px;
+}
+
 @media (max-width: 600px) {
-  form#registroForm {
-    padding: 15px;
-    width: 90%;
+  header {
+    flex-direction: column;
+    align-items: center;
   }
 
-  form#registroForm input, form#registroForm button {
-    font-size: 1em;
-    padding: 10px;
-  }
-
-  .pregunta {
-    padding: 10px;
-  }
-
-  .pregunta p {
-    font-size: 1em;
-  }
-
-  h1 {
-    font-size: 1.5em;
-  }
-
-  label {
-    flex-direction: row;
-    align-items: flex-start;
-    font-size: 1em;
-  }
-
-  input[type="radio"] {
-    transform: scale(1.2);
-  }
-
-  div[style*="background-image"] img {
-    max-height: 50px !important;
-  }
-
-  div[style*="background-image"] h1 {
-    font-size: 1.2em !important;
-    text-align: right;
+  .logo, .banner {
+    height: 60px;
+    margin-bottom: 10px;
   }
 }
