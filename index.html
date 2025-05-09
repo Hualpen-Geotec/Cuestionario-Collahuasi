@@ -6,18 +6,15 @@
   <title>Ingreso Cuestionario Collahuasi</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-  <script src="script.js"></script>
 <body>
   <div class="container">
-<header class="encabezado">
-  <div class="logo-titulo">
-    <img src="IMG20230425123305.jpg" alt="Logo Izquierdo" class="logo" />
-    <h1 class="titulo">Cuestionario Collahuasi</h1>
-  </div>
-  <img src="Logo Academia (002).png" alt="Banner Academia" class="banner-fondo" />
-</header>
-    
-    <h1>Ingreso al Cuestionario</h1>
+    <header class="encabezado">
+      <div class="logo-titulo">
+        <img src="IMG20230425123305.jpg" alt="Logo Izquierdo" class="logo" />
+        <h1 class="titulo">Cuestionario Collahuasi</h1>
+      </div>
+      <img src="Logo Academia (002).png" alt="Banner Academia" class="banner-fondo" />
+    </header>
 
     <form id="registroForm">
       <label for="rut">RUT (solo números, sin puntos ni guion):</label>
@@ -33,57 +30,7 @@
     </form>
   </div>
 
-  <script>
-    const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
-
-    function formatearRUT(rut) {
-      let cuerpo = rut.slice(0, -1);
-      let dv = rut.slice(-1).toUpperCase();
-      return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "-" + dv;
-    }
-
-    document.getElementById("rut").addEventListener("input", function () {
-      this.value = this.value.replace(/\D/g, "");
-    });
-
-    document.getElementById("rut").addEventListener("blur", async function () {
-      const rutIngresado = this.value.trim();
-      const mensaje = document.getElementById("mensaje");
-      mensaje.textContent = "";
-
-      if (rutIngresado.length < 7) {
-        mensaje.textContent = "Por favor, ingresa un RUT válido.";
-        return;
-      }
-
-      try {
-        const res = await fetch(`${RUT_URL}?rut=${rutIngresado}`);
-        const data = await res.json();
-
-        if (data.autorizado) {
-          document.getElementById("nombre").textContent = data.nombre;
-          document.getElementById("correo").textContent = data.correo;
-          document.getElementById("datosUsuario").style.display = "block";
-        } else {
-          mensaje.textContent = "Este RUT no está autorizado para realizar el cuestionario.";
-        }
-      } catch (err) {
-        mensaje.textContent = "Error al validar el RUT.";
-      }
-    });
-
-    document.getElementById("continuarBtn").addEventListener("click", () => {
-      const rut = document.getElementById("rut").value;
-      const nombre = document.getElementById("nombre").textContent;
-      const correo = document.getElementById("correo").textContent;
-
-      // Guardamos los datos en localStorage para usarlos en forms.html
-      localStorage.setItem("rut", rut);
-      localStorage.setItem("nombre", nombre);
-      localStorage.setItem("correo", correo);
-
-      window.location.href = "forms.html";
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
+
