@@ -5,8 +5,9 @@ body {
   background-color: #fef9f4;
   color: #333;
 }
+
 .container {
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
   padding: 20px;
   background: #ffffffee;
@@ -14,78 +15,40 @@ body {
   border-radius: 10px;
   margin-top: 40px;
 }
-/* Encabezado con logo, título y banner */
+
+/* Encabezado visual (con fondo de imagen) */
 .encabezado {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  margin-bottom: 30px;
+  display: none; /* si se usara el div con estilo inline, este se oculta */
 }
-.banner-fondo {
-  width: 100%;
-  height: auto;
-  max-height: 200px;
-  object-fit: cover;
-  display: block;
-}
-.logo-titulo {
-  position: absolute;
-  top: 10px;
-  left: 20px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  background-color: rgba(255,255,255,0.85);
-  padding: 8px 12px;
-  border-radius: 12px;
-}
-.logo {
-  height: 60px;
-  margin-right: 15px;
-}
-.titulo {
-  font-size: 24px;
-  margin: 0;
-  color: #333;
-}
-@media (max-width: 600px) {
-  .logo-titulo {
-    flex-direction: column;
-    align-items: center;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 15px;
-  }
-  .logo {
-    height: 50px;
-    margin: 0 0 8px;
-  }
-  .titulo {
-    font-size: 18px;
-    text-align: center;
-  }
-}
+
 /* Título general */
 h1, h2 {
   text-align: center;
   color: #4b4b4b;
 }
-/* Formulario */
+
+/* Formularios */
 form label {
   display: block;
   margin-top: 20px;
   font-weight: bold;
 }
-form input[type="text"] {
+
+form input[type="text"],
+form input[type="email"] {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
 }
+
 form input[type="radio"] {
   margin-right: 8px;
 }
+
 form button {
   display: block;
   margin: 30px auto 10px;
@@ -97,15 +60,20 @@ form button {
   cursor: pointer;
   transition: background 0.3s;
 }
+
 form button:hover {
   background-color: #a7d7c5;
 }
+
+/* Errores */
 .mensaje-error {
   color: #c0392b;
   font-weight: bold;
   margin-top: 15px;
   text-align: center;
 }
+
+/* Preguntas */
 .pregunta {
   margin-top: 30px;
   padding: 15px;
@@ -113,14 +81,19 @@ form button:hover {
   border-radius: 10px;
   border: 1px solid #e0e0e0;
 }
+
 .pregunta p {
   margin-bottom: 10px;
 }
+
 .pregunta label {
   display: block;
   margin: 5px 0;
   padding-left: 10px;
+  font-size: 15px;
 }
+
+/* Resultados */
 #resultados {
   margin-top: 30px;
   text-align: center;
@@ -129,7 +102,23 @@ form button:hover {
   padding: 20px;
   border: 1px solid #bde0fe;
 }
+
 #resumenErrores p {
   margin: 5px;
   font-size: 16px;
+}
+
+/* Adaptación móvil */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+
+  form button {
+    width: 100%;
+  }
+
+  .pregunta {
+    padding: 10px;
+  }
 }
