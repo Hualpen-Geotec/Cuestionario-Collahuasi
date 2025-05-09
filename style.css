@@ -1,0 +1,135 @@
+/* Estilo general */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fef9f4;
+  color: #333;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffffee;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  margin-top: 40px;
+}
+/* Encabezado con logo, título y banner */
+.encabezado {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+.banner-fondo {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.logo-titulo {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255,255,255,0.85);
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+.logo {
+  height: 60px;
+  margin-right: 15px;
+}
+.titulo {
+  font-size: 24px;
+  margin: 0;
+  color: #333;
+}
+@media (max-width: 600px) {
+  .logo-titulo {
+    flex-direction: column;
+    align-items: center;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 15px;
+  }
+  .logo {
+    height: 50px;
+    margin: 0 0 8px;
+  }
+  .titulo {
+    font-size: 18px;
+    text-align: center;
+  }
+}
+/* Título general */
+h1, h2 {
+  text-align: center;
+  color: #4b4b4b;
+}
+/* Formulario */
+form label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+}
+form input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+form input[type="radio"] {
+  margin-right: 8px;
+}
+form button {
+  display: block;
+  margin: 30px auto 10px;
+  padding: 12px 25px;
+  font-size: 16px;
+  background-color: #cce5dc;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+form button:hover {
+  background-color: #a7d7c5;
+}
+.mensaje-error {
+  color: #c0392b;
+  font-weight: bold;
+  margin-top: 15px;
+  text-align: center;
+}
+.pregunta {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f7f1f1;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+.pregunta p {
+  margin-bottom: 10px;
+}
+.pregunta label {
+  display: block;
+  margin: 5px 0;
+  padding-left: 10px;
+}
+#resultados {
+  margin-top: 30px;
+  text-align: center;
+  background: #f2f9ff;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #bde0fe;
+}
+#resumenErrores p {
+  margin: 5px;
+  font-size: 16px;
+}
