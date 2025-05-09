@@ -10,14 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const correoInput = document.getElementById("correoInput");
   const mensaje = document.getElementById("mensaje");
   const datosUsuario = document.getElementById("datosUsuario");
+  const buscarRutBtn = document.getElementById("buscarRutBtn");
+  const continuarBtn = document.getElementById("continuarBtn");
 
-  if (rutInput) {
+  if (rutInput && buscarRutBtn && continuarBtn) {
     rutInput.addEventListener("input", function () {
       this.value = this.value.replace(/\D/g, "");
     });
 
-    rutInput.addEventListener("blur", async function () {
-      const rutIngresado = this.value.trim();
+    buscarRutBtn.addEventListener("click", async () => {
+      const rutIngresado = rutInput.value.trim();
       mensaje.textContent = "";
 
       if (rutIngresado.length < 7) {
@@ -41,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    document.getElementById("continuarBtn").addEventListener("click", () => {
+    continuarBtn.addEventListener("click", () => {
       const rut = rutInput.value.trim();
       const nombre = nombreInput.value.trim();
       const correo = correoInput.value.trim();
@@ -63,8 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const formularioPreguntas = document.getElementById("formularioPreguntas");
 
   if (formularioPreguntas) {
-    let preguntas = [];
-
     const rut = localStorage.getItem("rut");
     const nombre = localStorage.getItem("nombre");
     const correo = localStorage.getItem("correo");
@@ -77,34 +77,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetch(PREGUNTAS_URL)
       .then(res => res.json())
-      .then(data => {
-        preguntas = data;
-        mostrarPreguntas();
-      })
+      .then(data => mostrarPreguntas(data))
       .catch(err => {
         formularioPreguntas.innerHTML = "<p style='color: red;'>Error cargando preguntas.</p>";
         console.error(err);
       });
 
-    function mostrarPreguntas() {
+    function mostrarPreguntas(preguntas) {
       if (!preguntas || preguntas.length === 0) {
         formularioPreguntas.innerHTML = "<p style='color: red;'>No se pudieron cargar preguntas.</p>";
         return;
       }
 
       preguntas.forEach((p, i) => {
-        const bloque = document.createElement("div");
-        bloque.classList.add("pregunta");
-
-        bloque.innerHTML = `<p><strong>${i + 1}. ${p.pregunta}</strong></p>` +
-          p.alternativas.map((alt, idx) => `
+        const div = document.createElement("div");
+        div.className = "pregunta";
+        div.innerHTML = `
+          <p><strong>${i + 1}. ${p.pregunta}</strong></p>
+          ${p.alternativas.map((alt, idx) => `
             <label>
               <input type="radio" name="pregunta${i}" value="${alt}" required />
               ${String.fromCharCode(65 + idx)}. ${alt}
             </label>
-          `).join("") + `<br><br>`;
-
-        formularioPreguntas.appendChild(bloque);
+          `).join("")}
+        `;
+        formularioPreguntas.appendChild(div);
       });
 
       const boton = document.createElement("button");
@@ -112,10 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
       boton.textContent = "Ver Resultados";
       formularioPreguntas.appendChild(boton);
 
-      formularioPreguntas.addEventListener("submit", procesarRespuestas);
+      formularioPreguntas.addEventListener("submit", e => procesarRespuestas(e, preguntas));
     }
 
-    function procesarRespuestas(e) {
+    function procesarRespuestas(e, preguntas) {
       e.preventDefault();
       let correctas = 0;
       const erroresPorFuente = {};
@@ -130,8 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
           erroresPorFuente[p.fuente] = (erroresPorFuente[p.fuente] || 0) + 1;
         }
 
-        const radios = document.getElementsByName(`pregunta${i}`);
-        radios.forEach(r => {
+        document.getElementsByName(`pregunta${i}`).forEach(r => {
           r.disabled = true;
           if (r.value === p.correcta) r.parentElement.style.color = "green";
           if (r.value === respuesta && respuesta !== p.correcta) r.parentElement.style.color = "red";
@@ -159,9 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("nuevoIntento").addEventListener("click", () => {
-      localStorage.removeItem("rut");
-      localStorage.removeItem("nombre");
-      localStorage.removeItem("correo");
+      localStorage.clear();
       window.location.href = "index.html";
     });
   }
