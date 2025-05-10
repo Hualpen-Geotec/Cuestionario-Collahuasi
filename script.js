@@ -141,7 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
       porcentajeEl.textContent = `Tu puntaje es: ${porcentaje}%`;
       porcentajeEl.style.color = porcentaje >= 85 ? "green" : "red";
 
-      // Mostrar solo preguntas incorrectas
       const resumen = document.getElementById("resumenErrores");
       resumen.innerHTML = preguntasErroneas.map((p, i) => {
         return `
@@ -162,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }).join("");
 
-      // Enviar resultados por GET sin fetch (para evitar CORS)
+      // Enviar resultados por GET usando carga oculta (sin CORS)
       const params = new URLSearchParams({
         rut,
         nombre,
@@ -172,15 +171,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const img = new Image();
-      img.src = `${ENVIO_URL}?${params.toString()}`; // Carga invisible
+      img.src = `${ENVIO_URL}?${params.toString()}`;
 
       document.getElementById("resultados").style.display = "block";
     }
 
+    // ✅ BOTÓN "Nuevo intento" ahora solo recarga forms.html
     document.getElementById("nuevoIntento").addEventListener("click", () => {
-      localStorage.clear();
-      window.location.href = "index.html";
+      window.location.reload(); // mantiene datos de localStorage
     });
   }
 });
-
