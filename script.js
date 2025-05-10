@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
           correoInput.value = data.correo || "";
           datosUsuario.style.display = "block";
         } else {
-          mensaje.textContent = "Este RUT no está autorizado para realizar el cuestionario.";
+          mensaje.textContent = "Este RUT no está autorizado para realizar el cuestionario. Consulta a tu Supervisor (Aunque no te servirá de nada, porque aquí mando yo... ja ja)";
         }
       } catch (err) {
         mensaje.textContent = "Error al validar el RUT.";
@@ -163,10 +163,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Enviar resultados por GET usando carga oculta (sin CORS)
       const params = new URLSearchParams({
-        rut,
-        nombre,
-        correo,
-        nota: porcentaje,
+        RUT,
+        NOMBRE,
+        CORREO,
+        NOTA: porcentaje,
         errores: JSON.stringify(erroresPorFuente)
       });
 
