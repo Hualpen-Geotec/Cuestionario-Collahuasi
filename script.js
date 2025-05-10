@@ -1,7 +1,7 @@
 // CONFIGURACIÓN DE URLS
 const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
 const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbxBMbqYIO7KDTWHDFAP3Jzh8EH-mviRV0VeW6P-NX52NIfmx16MtpHQbAvjI7U_kZeK/exec";
-const ENVIO_URL = "https://script.google.com/macros/s/AKfycby6Kd52wtnq71OsQgzuE9rWseu8VlaORZyI1Gq3jRLm2H3gjxQTilU-rQlFZkWZeubSnQ/exec";
+const ENVIO_URL = "https://script.google.com/macros/s/AKfycbzS-aHIfvUZa4-jNbusHW8UAdnp1tBknw6VkWOxuoR2EXE1P_xApTN5aEDWKgaIaOyYfQ/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   const rutInput = document.getElementById("rut");
