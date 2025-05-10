@@ -1,6 +1,6 @@
 // CONFIGURACIÓN DE URLS
 const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
-const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycby_owVGl_UVMF9NbRBnUdfN3Yubr8J8fTpP874wRL8XyQM8q_-pORRqrphHVimroMRiPw/exec";
+const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbxBMbqYIO7KDTWHDFAP3Jzh8EH-mviRV0VeW6P-NX52NIfmx16MtpHQbAvjI7U_kZeK/exec";
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycby6Kd52wtnq71OsQgzuE9rWseu8VlaORZyI1Gq3jRLm2H3gjxQTilU-rQlFZkWZeubSnQ/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
