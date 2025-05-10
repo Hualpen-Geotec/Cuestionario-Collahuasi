@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }).join("");
 
-      // Enviar resultados por GET
+      // Enviar resultados por GET sin fetch (para evitar CORS)
       const params = new URLSearchParams({
         rut,
         nombre,
@@ -171,13 +171,8 @@ document.addEventListener("DOMContentLoaded", () => {
         errores: JSON.stringify(erroresPorFuente)
       });
 
-      fetch(`${ENVIO_URL}?${params.toString()}`)
-        .then(res => res.text())
-        .then(res => console.log("Resultado enviado:", res))
-        .catch(err => {
-          alert("Error al guardar los resultados.");
-          console.error("Error al enviar resultados:", err);
-        });
+      const img = new Image();
+      img.src = `${ENVIO_URL}?${params.toString()}`; // Carga invisible
 
       document.getElementById("resultados").style.display = "block";
     }
