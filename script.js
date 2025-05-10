@@ -1,6 +1,6 @@
 // CONFIGURACIÓN DE URLS
 const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
-const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbwpZHA5cfKCoyvFBfeeZAPUZ4SqMX3MhmpcdkPPhNrk0gFwpBoewz5Y8VoWFsZNs2qM/exec";
+const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycby_owVGl_UVMF9NbRBnUdfN3Yubr8J8fTpP874wRL8XyQM8q_-pORRqrphHVimroMRiPw/exec";
 const ENVIO_URL = "https://script.google.com/macros/s/AKfycby6Kd52wtnq71OsQgzuE9rWseu8VlaORZyI1Gq3jRLm2H3gjxQTilU-rQlFZkWZeubSnQ/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
       porcentajeEl.textContent = `Tu puntaje es: ${porcentaje}%`;
       porcentajeEl.style.color = porcentaje >= 85 ? "green" : "red";
 
-      // Mostrar solo las preguntas incorrectas
+      // Mostrar solo preguntas incorrectas
       const resumen = document.getElementById("resumenErrores");
       resumen.innerHTML = preguntasErroneas.map((p, i) => {
         return `
@@ -162,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }).join("");
 
+      // Enviar resultados por GET
       const params = new URLSearchParams({
         rut,
         nombre,
@@ -187,5 +188,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
 
