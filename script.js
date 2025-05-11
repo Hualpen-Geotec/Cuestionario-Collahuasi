@@ -27,7 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   function normalizarTexto(texto) {
-    return texto.trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+    return (texto || "").toString()
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "");
   }
 
   function iniciarCuestionario(preguntas) {
@@ -98,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let correctas = 0;
       const preguntasErroneas = [];
       preguntas.forEach((p, i) => {
-        const respuestaUsuario = normalizarTexto(respuestas[i] || "");
+        const respuestaUsuario = normalizarTexto(respuestas[i]);
         const respuestaCorrecta = normalizarTexto(p.correcta);
         if (respuestaUsuario === respuestaCorrecta) {
           correctas++;
@@ -116,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formularioPreguntas.style.display = "none";
       resultadosDiv.style.display = "block";
       porcentajeEl.innerHTML = porcentaje === 100
-        ? `<span style='font-size: 2em; color: green;'>${porcentaje}%<br>FELICITACIONES, LO LOGRASTE!!<br><em>(Inténtalo de nuevo y prùébame que no fue sólo suerte...)</em></span>`
+        ? `<span style='font-size: 2em; color: green;'>${porcentaje}%<br>FELICITACIONES, LO LOGRASTE!!<br><em>(Inténtalo de nuevo y pruébame que no fue sólo suerte...)</em></span>`
         : `<span style='color: ${porcentaje >= 85 ? "green" : "red"};'>Tu puntaje es: ${porcentaje}%</span>`;
 
       resumen.innerHTML = preguntasErroneas.map((p, i) => `
