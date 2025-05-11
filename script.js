@@ -25,6 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error cargando preguntas:", err);
     });
 
+  function normalizarTexto(texto) {
+    return texto
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
   function mostrarPreguntas(preguntas) {
     formularioPreguntas.innerHTML = "";
     if (!preguntas || preguntas.length === 0) {
@@ -62,8 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const preguntasErroneas = [];
 
     preguntas.forEach((p, i) => {
-      const seleccionada = document.querySelector(`input[name="pregunta${i}"]:checked`).value;
-      const esCorrecta = seleccionada === p.correcta;
+      const seleccionInput = document.querySelector(`input[name="pregunta${i}"]:checked`);
+      const seleccionada = seleccionInput ? seleccionInput.value : "";
+      const esCorrecta = normalizarTexto(seleccionada) === normalizarTexto(p.correcta);
 
       if (esCorrecta) {
         correctas++;
@@ -79,8 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       document.getElementsByName(`pregunta${i}`).forEach(r => {
         r.disabled = true;
-        if (r.value === p.correcta) r.parentElement.style.color = "green";
-        if (r.value === seleccionada && r.value !== p.correcta) r.parentElement.style.color = "red";
+        if (normalizarTexto(r.value) === normalizarTexto(p.correcta)) {
+          r.parentElement.style.color = "green";
+        }
+        if (r.checked && !esCorrecta) {
+          r.parentElement.style.color = "red";
+        }
       });
     });
 
@@ -97,9 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>${i + 1}. ${p.pregunta}</strong></p>
           <ul>
             ${p.alternativas.map(alt => {
-              if (alt === p.correcta) {
+              if (normalizarTexto(alt) === normalizarTexto(p.correcta)) {
                 return `<li style="color:green;"><strong>✓ ${alt}</strong> (correcta)</li>`;
-              } else if (alt === p.seleccionada) {
+              } else if (normalizarTexto(alt) === normalizarTexto(p.seleccionada)) {
                 return `<li style="color:red;"><strong>✗ ${alt}</strong> (tu respuesta)</li>`;
               } else {
                 return `<li>${alt}</li>`;
