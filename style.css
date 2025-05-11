@@ -10,12 +10,56 @@ body {
   margin: 0 auto;
   padding: 20px;
   background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  transition: all 0.3s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .pregunta {
   margin-bottom: 30px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.pregunta.slide-left {
+  animation: slideLeft 0.5s ease-in-out;
+}
+
+.pregunta.slide-right {
+  animation: slideRight 0.5s ease-in-out;
 }
 
 .pregunta label {
@@ -23,6 +67,13 @@ body {
   align-items: center;
   margin-top: 10px;
   font-size: 16px;
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: background-color 0.3s;
+}
+
+.pregunta label:hover {
+  background-color: #f9f1ea;
 }
 
 .pregunta input[type="radio"] {
@@ -30,33 +81,47 @@ body {
 }
 
 button {
-  background-color: #004c99;
+  background-color: #b87333; /* cobre */
   color: white;
+  font-weight: bold;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 24px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  background-color: #0066cc;
+  background-color: #d58a45; /* cobre más claro */
+  transform: scale(1.05);
 }
 
 #porcentaje {
   font-size: 20px;
   margin-bottom: 20px;
   text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
 }
 
 #resumenErrores {
   margin-top: 30px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.pregunta-error {
+  border: 2px solid #e74c3c;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background-color: #fff6f5;
+  box-shadow: 0 0 5px rgba(231, 76, 60, 0.2);
 }
 
 .pregunta-error ul {
   list-style-type: none;
   padding-left: 0;
+  margin-top: 10px;
 }
 
 .pregunta-error li {
