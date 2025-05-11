@@ -72,7 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
     preguntas.forEach((p, i) => {
       const seleccionInput = document.querySelector(`input[name="pregunta${i}"]:checked`);
       const seleccionada = seleccionInput ? seleccionInput.value : "";
-      const esCorrecta = normalizarTexto(seleccionada) === normalizarTexto(p.correcta);
+
+      const respuestaUsuario = normalizarTexto(seleccionada);
+      const respuestaCorrecta = normalizarTexto(p.correcta);
+      const esCorrecta = respuestaUsuario === respuestaCorrecta;
 
       if (esCorrecta) {
         correctas++;
@@ -88,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       document.getElementsByName(`pregunta${i}`).forEach(r => {
         r.disabled = true;
-        if (normalizarTexto(r.value) === normalizarTexto(p.correcta)) {
+        if (normalizarTexto(r.value) === respuestaCorrecta) {
           r.parentElement.style.color = "green";
         }
         if (r.checked && !esCorrecta) {
@@ -99,31 +102,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const porcentaje = Math.round((correctas / preguntas.length) * 100);
     const porcentajeEl = document.getElementById("porcentaje");
-    porcentajeEl.textContent = `Tu puntaje es: ${porcentaje}%`;
-    porcentajeEl.style.color = porcentaje >= 85 ? "green" : "red";
+    if (porcentajeEl) {
+      porcentajeEl.textContent = `Tu puntaje es: ${porcentaje}%`;
+      porcentajeEl.style.color = porcentaje >= 85 ? "green" : "red";
+    }
 
-    // Mostrar resumen de errores
     const resumen = document.getElementById("resumenErrores");
-    resumen.innerHTML = preguntasErroneas.map((p, i) => {
-      return `
-        <div class="pregunta-error">
-          <p><strong>${i + 1}. ${p.pregunta}</strong></p>
-          <ul>
-            ${p.alternativas.map(alt => {
-              if (normalizarTexto(alt) === normalizarTexto(p.correcta)) {
-                return `<li style="color:green;"><strong>✓ ${alt}</strong> (correcta)</li>`;
-              } else if (normalizarTexto(alt) === normalizarTexto(p.seleccionada)) {
-                return `<li style="color:red;"><strong>✗ ${alt}</strong> (tu respuesta)</li>`;
-              } else {
-                return `<li>${alt}</li>`;
-              }
-            }).join("")}
-          </ul>
-        </div>
-      `;
-    }).join("");
+    if (resumen) {
+      resumen.innerHTML = preguntasErroneas.map((p, i) => {
+        return `
+          <div class="pregunta-error">
+            <p><strong>${i + 1}. ${p.pregunta}</strong></p>
+            <ul>
+              ${p.alternativas.map(alt => {
+                if (normalizarTexto(alt) === normalizarTexto(p.correcta)) {
+                  return `<li style="color:green;"><strong>✓ ${alt}</strong> (correcta)</li>`;
+                } else if (normalizarTexto(alt) === normalizarTexto(p.seleccionada)) {
+                  return `<li style="color:red;"><strong>✗ ${alt}</strong> (tu respuesta)</li>`;
+                } else {
+                  return `<li>${alt}</li>`;
+                }
+              }).join("")}
+            </ul>
+          </div>
+        `;
+      }).join("");
+    }
 
-    // Enviar resultados al servidor
     const params = new URLSearchParams({
       rut,
       nombre,
@@ -140,10 +145,16 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error al enviar resultados:", err);
       });
 
-    document.getElementById("resultados").style.display = "block";
+    const divResultados = document.getElementById("resultados");
+    if (divResultados) {
+      divResultados.style.display = "block";
+    }
   }
 
-  document.getElementById("nuevoIntento").addEventListener("click", () => {
-    window.location.reload();
-  });
+  const nuevoIntentoBtn = document.getElementById("nuevoIntento");
+  if (nuevoIntentoBtn) {
+    nuevoIntentoBtn.addEventListener("click", () => {
+      window.location.reload();
+    });
+  }
 });
