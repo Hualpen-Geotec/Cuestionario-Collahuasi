@@ -4,8 +4,9 @@ const ENVIO_URL = "https://script.google.com/macros/s/AKfycbzS-aHIfvUZa4-jNbusHW
 
 document.addEventListener("DOMContentLoaded", () => {
   const formularioPreguntas = document.getElementById("formularioPreguntas");
-
-  if (!formularioPreguntas) return;
+  const resultadosDiv = document.getElementById("resultados");
+  const porcentajeEl = document.getElementById("porcentaje");
+  const resumen = document.getElementById("resumenErrores");
 
   const rut = localStorage.getItem("rut");
   const nombre = localStorage.getItem("nombre");
@@ -19,142 +20,134 @@ document.addEventListener("DOMContentLoaded", () => {
 
   fetch(PREGUNTAS_URL)
     .then(res => res.json())
-    .then(data => mostrarPreguntas(data))
+    .then(data => iniciarCuestionario(data))
     .catch(err => {
       formularioPreguntas.innerHTML = "<p style='color: red;'>Error cargando preguntas.</p>";
       console.error("Error cargando preguntas:", err);
     });
 
   function normalizarTexto(texto) {
-    return texto
-      .trim()
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+    return texto.trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
   }
 
-  function mostrarPreguntas(preguntas) {
-    formularioPreguntas.innerHTML = "";
-    if (!preguntas || preguntas.length === 0) {
-      formularioPreguntas.innerHTML = "<p style='color: red;'>No se pudieron cargar preguntas.</p>";
-      return;
-    }
+  function iniciarCuestionario(preguntas) {
+    let indice = 0;
+    const respuestas = new Array(preguntas.length).fill(null);
 
-    preguntas.forEach((p, i) => {
+    function renderPregunta(i) {
+      formularioPreguntas.innerHTML = "";
+      const p = preguntas[i];
       const div = document.createElement("div");
       div.className = "pregunta";
-      div.innerHTML = `
-        <p><strong>${i + 1}. ${p.pregunta}</strong></p>
-        ${p.alternativas.map((alt, idx) => `
-          <label>
-            <input type="radio" name="pregunta${i}" value="${alt}" required />
-            ${String.fromCharCode(65 + idx)}. ${alt}
-          </label>
-        `).join("")}
-      `;
-      formularioPreguntas.appendChild(div);
-    });
+      div.innerHTML = `<p><strong>${i + 1}. ${p.pregunta}</strong></p>`;
 
-    const boton = document.createElement("button");
-    boton.type = "submit";
-    boton.textContent = "Ver Resultados";
-    formularioPreguntas.appendChild(boton);
+      p.alternativas.forEach((alt, idx) => {
+        const altDiv = document.createElement("div");
+        altDiv.style.margin = "12px 0";
+        altDiv.innerHTML = `
+          <label style="display:flex; align-items:center;">
+            <input type="radio" name="pregunta" value="${alt}" ${respuestas[i] === alt ? "checked" : ""} />
+            <span style="margin-left: 12px">${alt}</span>
+          </label>`;
+        div.appendChild(altDiv);
+      });
 
-    formularioPreguntas.addEventListener("submit", e => procesarRespuestas(e, preguntas));
-  }
+      const mensajeError = document.createElement("p");
+      mensajeError.style.color = "red";
+      mensajeError.style.display = "none";
+      mensajeError.id = "mensajeError";
+      mensajeError.textContent = "Seleccione una alternativa para continuar";
+      div.appendChild(mensajeError);
 
-  function procesarRespuestas(e, preguntas) {
-    e.preventDefault();
-    let correctas = 0;
-    const erroresPorFuente = {};
-    const preguntasErroneas = [];
+      const botonesDiv = document.createElement("div");
+      botonesDiv.style.marginTop = "20px";
 
-    preguntas.forEach((p, i) => {
-      const seleccionInput = document.querySelector(`input[name="pregunta${i}"]:checked`);
-      const seleccionada = seleccionInput ? seleccionInput.value : "";
-
-      const respuestaUsuario = normalizarTexto(seleccionada);
-      const respuestaCorrecta = normalizarTexto(p.correcta);
-      const esCorrecta = respuestaUsuario === respuestaCorrecta;
-
-      if (esCorrecta) {
-        correctas++;
-      } else {
-        erroresPorFuente[p.fuente] = (erroresPorFuente[p.fuente] || 0) + 1;
-        preguntasErroneas.push({
-          pregunta: p.pregunta,
-          seleccionada,
-          correcta: p.correcta,
-          alternativas: p.alternativas
-        });
+      if (i > 0) {
+        const btnAtras = document.createElement("button");
+        btnAtras.textContent = "Atrás";
+        btnAtras.type = "button";
+        btnAtras.onclick = () => renderPregunta(i - 1);
+        botonesDiv.appendChild(btnAtras);
       }
 
-      document.getElementsByName(`pregunta${i}`).forEach(r => {
-        r.disabled = true;
-        if (normalizarTexto(r.value) === respuestaCorrecta) {
-          r.parentElement.style.color = "green";
+      const btnSiguiente = document.createElement("button");
+      btnSiguiente.textContent = i === preguntas.length - 1 ? "Finalizar" : "Siguiente";
+      btnSiguiente.type = "button";
+      btnSiguiente.style.marginLeft = "10px";
+      btnSiguiente.onclick = () => {
+        const seleccion = div.querySelector('input[name="pregunta"]:checked');
+        if (!seleccion) {
+          mensajeError.style.display = "block";
+          return;
         }
-        if (r.checked && !esCorrecta) {
-          r.parentElement.style.color = "red";
+        mensajeError.style.display = "none";
+        respuestas[i] = seleccion.value;
+        if (i === preguntas.length - 1) {
+          procesarResultados();
+        } else {
+          renderPregunta(i + 1);
+        }
+      };
+      botonesDiv.appendChild(btnSiguiente);
+
+      div.appendChild(botonesDiv);
+      formularioPreguntas.appendChild(div);
+    }
+
+    function procesarResultados() {
+      let correctas = 0;
+      const preguntasErroneas = [];
+      preguntas.forEach((p, i) => {
+        const respuestaUsuario = normalizarTexto(respuestas[i] || "");
+        const respuestaCorrecta = normalizarTexto(p.correcta);
+        if (respuestaUsuario === respuestaCorrecta) {
+          correctas++;
+        } else {
+          preguntasErroneas.push({
+            pregunta: p.pregunta,
+            seleccionada: respuestas[i],
+            correcta: p.correcta,
+            alternativas: p.alternativas
+          });
         }
       });
-    });
 
-    const porcentaje = Math.round((correctas / preguntas.length) * 100);
-    const porcentajeEl = document.getElementById("porcentaje");
-    if (porcentajeEl) {
-      porcentajeEl.textContent = `Tu puntaje es: ${porcentaje}%`;
-      porcentajeEl.style.color = porcentaje >= 85 ? "green" : "red";
-    }
+      const porcentaje = Math.round((correctas / preguntas.length) * 100);
+      formularioPreguntas.style.display = "none";
+      resultadosDiv.style.display = "block";
+      porcentajeEl.innerHTML = porcentaje === 100
+        ? `<span style='font-size: 2em; color: green;'>${porcentaje}%<br>FELICITACIONES, LO LOGRASTE!!<br><em>(Inténtalo de nuevo y prùébame que no fue sólo suerte...)</em></span>`
+        : `<span style='color: ${porcentaje >= 85 ? "green" : "red"};'>Tu puntaje es: ${porcentaje}%</span>`;
 
-    const resumen = document.getElementById("resumenErrores");
-    if (resumen) {
-      resumen.innerHTML = preguntasErroneas.map((p, i) => {
-        return `
-          <div class="pregunta-error">
-            <p><strong>${i + 1}. ${p.pregunta}</strong></p>
-            <ul>
-              ${p.alternativas.map(alt => {
-                if (normalizarTexto(alt) === normalizarTexto(p.correcta)) {
-                  return `<li style="color:green;"><strong>✓ ${alt}</strong> (correcta)</li>`;
-                } else if (normalizarTexto(alt) === normalizarTexto(p.seleccionada)) {
-                  return `<li style="color:red;"><strong>✗ ${alt}</strong> (tu respuesta)</li>`;
-                } else {
-                  return `<li>${alt}</li>`;
-                }
-              }).join("")}
-            </ul>
-          </div>
-        `;
-      }).join("");
-    }
+      resumen.innerHTML = preguntasErroneas.map((p, i) => `
+        <div class="pregunta-error">
+          <p><strong>${i + 1}. ${p.pregunta}</strong></p>
+          <ul>
+            ${p.alternativas.map(alt => {
+              if (normalizarTexto(alt) === normalizarTexto(p.correcta)) {
+                return `<li style="color:green;"><strong>✓ ${alt}</strong> (correcta)</li>`;
+              } else if (normalizarTexto(alt) === normalizarTexto(p.seleccionada)) {
+                return `<li style="color:red;"><strong>✗ ${alt}</strong> (tu respuesta)</li>`;
+              } else {
+                return `<li>${alt}</li>`;
+              }
+            }).join("")}
+          </ul>
+        </div>
+      `).join("");
 
-    const params = new URLSearchParams({
-      rut,
-      nombre,
-      correo,
-      nota: porcentaje,
-      errores: JSON.stringify(erroresPorFuente)
-    });
-
-    fetch(`${ENVIO_URL}?${params.toString()}`)
+      fetch(`${ENVIO_URL}?` + new URLSearchParams({
+        rut, nombre, correo, nota: porcentaje
+      }))
       .then(res => res.text())
-      .then(res => console.log("Resultado enviado:", res))
-      .catch(err => {
-        alert("Error al guardar los resultados.");
-        console.error("Error al enviar resultados:", err);
-      });
-
-    const divResultados = document.getElementById("resultados");
-    if (divResultados) {
-      divResultados.style.display = "block";
+      .then(r => console.log("Resultado enviado", r));
     }
+
+    renderPregunta(indice);
   }
 
   const nuevoIntentoBtn = document.getElementById("nuevoIntento");
   if (nuevoIntentoBtn) {
-    nuevoIntentoBtn.addEventListener("click", () => {
-      window.location.reload();
-    });
+    nuevoIntentoBtn.addEventListener("click", () => window.location.reload());
   }
 });
