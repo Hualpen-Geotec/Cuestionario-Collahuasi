@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formularioPreguntas.style.display = "none";
       resultadosDiv.style.display = "block";
       porcentajeEl.innerHTML = porcentaje === 100
-        ? `<span style='font-size: 2em; color: green;'>${porcentaje}%<br>FELICITACIONES, LO LOGRASTE!!<br><em>(Inténtalo de nuevo y pruébame que no fue sólo suerte...)</em></span>`
+        ? `<span style='font-size: 2em; color: green;'>${porcentaje}%<br>FELICITACIONES, LO LOGRASTE!!<br><em>(Inténtalo de nuevo y prúbame que no fue sólo suerte...)</em></span>`
         : `<span style='color: ${porcentaje >= 85 ? "green" : "red"};'>Tu puntaje es: ${porcentaje}%</span>`;
 
       resumen.innerHTML = preguntasErroneas.map((p, i) => `
@@ -140,11 +140,17 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `).join("");
 
-      fetch(`${ENVIO_URL}?` + new URLSearchParams({
-        rut, nombre, correo, nota: porcentaje
-      }))
-      .then(res => res.text())
-      .then(r => console.log("Resultado enviado", r));
+      // Enviar resultados por POST
+      fetch(ENVIO_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ rut, nombre, correo, nota: porcentaje })
+      })
+      .then(res => res.json())
+      .then(data => console.log("Resultado enviado:", data))
+      .catch(err => console.error("Error al enviar resultado:", err));
     }
 
     renderPregunta(indice);
