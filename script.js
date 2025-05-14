@@ -101,17 +101,23 @@ document.addEventListener("DOMContentLoaded", () => {
     function procesarResultados() {
       let correctas = 0;
       const preguntasErroneas = [];
+      const erroresPorFuente = {};
+
       preguntas.forEach((p, i) => {
         const respuestaUsuario = normalizarTexto(respuestas[i]);
         const respuestaCorrecta = normalizarTexto(p.correcta);
         if (respuestaUsuario === respuestaCorrecta) {
           correctas++;
         } else {
+          const fuente = p.fuente || "Sin fuente";
+          erroresPorFuente[fuente] = (erroresPorFuente[fuente] || 0) + 1;
+
           preguntasErroneas.push({
             pregunta: p.pregunta,
             seleccionada: respuestas[i],
             correcta: p.correcta,
-            alternativas: p.alternativas
+            alternativas: p.alternativas,
+            fuente: fuente
           });
         }
       });
@@ -120,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formularioPreguntas.style.display = "none";
       resultadosDiv.style.display = "block";
       porcentajeEl.innerHTML = porcentaje === 100
-        ? `<span style='font-size: 2em; color: green;'>${porcentaje}%<br>FELICITACIONES, LO LOGRASTE!!<br><em>(Inténtalo de nuevo y prúbame que no fue sólo suerte...)</em></span>`
+        ? `<span style='font-size: 2em; color: green;'>${porcentaje}%<br>FELICITACIONES, LO LOGRASTE!!<br><em>(Inténtalo de nuevo y pruébame que no fue sólo suerte...)</em></span>`
         : `<span style='color: ${porcentaje >= 85 ? "green" : "red"};'>Tu puntaje es: ${porcentaje}%</span>`;
 
       resumen.innerHTML = preguntasErroneas.map((p, i) => `
@@ -140,13 +146,20 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `).join("");
 
-      // Enviar resultados por POST
+      const datosParaEnviar = {
+        rut,
+        nombre,
+        correo,
+        nota: porcentaje,
+        erroresPorFuente
+      };
+
       fetch(ENVIO_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ rut, nombre, correo, nota: porcentaje })
+        body: JSON.stringify(datosParaEnviar)
       })
       .then(res => res.json())
       .then(data => console.log("Resultado enviado:", data))
