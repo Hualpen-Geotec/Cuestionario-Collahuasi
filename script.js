@@ -1,6 +1,6 @@
 // CONFIGURACIÓN DE URLS
 const PREGUNTAS_URL = "https://script.google.com/macros/s/AKfycbxBMbqYIO7KDTWHDFAP3Jzh8EH-mviRV0VeW6P-NX52NIfmx16MtpHQbAvjI7U_kZeK/exec";
-const ENVIO_URL = "https://script.google.com/macros/s/AKfycbzS-aHIfvUZa4-jNbusHW8UAdnp1tBknw6VkWOxuoR2EXE1P_xApTN5aEDWKgaIaOyYfQ/exec";
+const ENVIO_URL = "https://script.google.com/macros/s/AKfycbxzGpfD9KSrarirQrn14A08sNZlq0S7wYhacSPZRWv0eDKVXTpm0l-yh_YBuy-kMfwwhQ/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   const formularioPreguntas = document.getElementById("formularioPreguntas");
