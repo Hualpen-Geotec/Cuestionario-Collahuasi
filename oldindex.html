@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingreso Cuestionario Collahuasi</title>
+  <link rel="stylesheet" href="style.css?v=1.3" />
+</head>
+<body>
+  <div class="container">
+    <div style="
+      background-image: url('IMG20230425123305.jpg');
+      background-size: cover;
+      background-position: center;
+      padding: 20px 30px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+      margin-bottom: 20px;
+    ">
+      <img src="Logo Academia (002).png" alt="Logo Hualpén Academia" style="max-height: 80px; width: auto;">
+      <h1 style="font-size: 2em; font-weight: bold; margin: 10px auto 0; text-align: center; flex-grow: 1;">
+        CUESTIONARIO MINERO
+      </h1>
+    </div>
 
+    <form id="registroForm">
+      <label for="rut">RUT (sin puntos ni guion):</label>
+      <input type="text" id="rut" name="rut" required maxlength="9" placeholder="Ej: 123456789" />
+
+      <button type="button" id="buscarRutBtn">Buscar RUT</button>
+
+      <div id="datosUsuario" style="display: none;">
+        <label for="nombreInput">Nombre:</label>
+        <input type="text" id="nombreInput" name="nombre" required />
+
+        <label for="correoInput">Correo:</label>
+        <input type="email" id="correoInput" name="correo" required />
+
+        <button type="button" id="continuarBtn">Validar datos y continuar</button>
+      </div>
+
+      <p id="mensaje" class="mensaje-error"></p>
+    </form>
+  </div>
+
+  <script>
+    const RUT_URL = "https://script.google.com/macros/s/AKfycbzvjsK77j6Fm3j3fcNsSWQwWf9F8ZLwuZzJ4IrkumTzSKLSJskOxfUc_OzlfgNii2FG5g/exec";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const rutInput = document.getElementById("rut");
+      const nombreInput = document.getElementById("nombreInput");
+      const correoInput = document.getElementById("correoInput");
+      const mensaje = document.getElementById("mensaje");
+      const datosUsuario = document.getElementById("datosUsuario");
+
+      rutInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "");
+      });
+
+      document.getElementById("buscarRutBtn").addEventListener("click", async () => {
+        const rut = rutInput.value.trim();
+        mensaje.textContent = "";
+
+        if (rut.length < 7) {
+          mensaje.textContent = "Por favor, ingresa un RUT válido.";
+          return;
+        }
+
+        try {
+          const res = await fetch(`${RUT_URL}?rut=${rut}`);
+          const data = await res.json();
+
+          if (data.autorizado) {
+            nombreInput.value = data.nombre || "";
+            correoInput.value = data.correo || "";
+            datosUsuario.style.display = "block";
+            mensaje.textContent = "";
+          } else {
+            mensaje.textContent = "Este RUT no está autorizado para realizar el cuestionario.";
+          }
+        } catch (error) {
+          mensaje.textContent = "Error al conectar con el servidor.";
+          console.error("Error:", error);
+        }
+      });
+
+      document.getElementById("continuarBtn").addEventListener("click", () => {
+        const rut = rutInput.value.trim();
+        const nombre = nombreInput.value.trim();
+        const correo = correoInput.value.trim();
+
+        if (!rut || !nombre || !correo) {
+          alert("Por favor, completa todos los campos.");
+          return;
+        }
+
+        localStorage.setItem("rut", rut);
+        localStorage.setItem("nombre", nombre);
+        localStorage.setItem("correo", correo);
+
+        window.location.href = "forms.html";
+      });
+    });
+  </script>
+</body>
+</html>
